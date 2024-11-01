@@ -1,113 +1,383 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useEffect, useState } from "react";
+import {
+  MapPin,
+  ShoppingCart,
+  X,
+  Instagram,
+  Facebook,
+  Phone,
+  Menu,
+} from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { BiCheckDouble } from "react-icons/bi";
+
+export default function Component() {
+  const [isNavSticky, setIsNavSticky] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      setIsNavSticky(offset > 100);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImage.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const categories = [
+    { name: "ВОЛОСЫ", image: "/hair2.jpg?height=600&width=400" },
+    { name: "НОГТЕВОЙ СЕРВИС", image: "/nails.webp?height=600&width=400" },
+    { name: "БРОВИ И РЕСНИЦЫ", image: "/eyes2.webp?height=600&width=400" },
+    { name: "МАКИЯЖ", image: "/makeup.png?height=600&width=400" },
+    { name: "ДЕВИЧНИК", image: "/ladies.png?height=600&width=400" },
+    { name: "ДЛЯ МУЖЧИН", image: "/mens.png?height=600&width=400" },
+    // { name: "ДЛЯ ДЕТЕЙ", image: "/children.png?height=600&width=400" },
+  ];
+
+  const heroImage = [
+    "eye.webp",
+    "face.jpg",
+    "hair.jpg",
+    "nails.jpeg",
+    "men.png",
+  ];
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="relative min-h-screen px-4 lg:px-0">
+      {/* Main Navigation */}
+      <nav
+        className={`
+          ${
+            isNavSticky
+              ? "fixed top-0 w-full animate-slideDown bg-white shadow-md"
+              : ""
+          }
+          md:hidden z-50 bg-background flex items-center justify-between p-4
+        `}
+      >
+        <Link
+          href="https://www.google.com/"
+          className="text-3xl font-bold text-[#e5958e]"
+        >
+          <Image src="/logo.png" alt="logo" width={150} height={150} />
+        </Link>
+
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="z-50"
+        >
+          {isMobileMenuOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </button>
+      </nav>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-white md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          <div
+            className="flex flex-col items-center justify-center h-full space-y-6"
+            onClick={(e) => e.stopPropagation()}
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            <Link
+              href="https://www.google.com/"
+              className="text-lg font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              УСЛУГИ
+            </Link>
+            <Link
+              href="https://www.google.com/"
+              className="text-lg font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              ПРОДУКТЫ
+            </Link>
+            <Link
+              href="https://www.google.com/"
+              className="text-lg font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              КОНТАКТЫ
+            </Link>
+            <Link
+              href="https://www.google.com/"
+              className="text-lg font-medium"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              ПРАЙС
+            </Link>
+            <Link href="https://www.google.com/">
+              {" "}
+              <div className="relative">
+                <ShoppingCart className="h-6 w-6" />
+                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                  0
+                </span>
+              </div>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Desktop Navigation */}
+      <nav
+        className={`
+          ${
+            isNavSticky
+              ? "fixed top-0 w-full animate-slideDown bg-white shadow-md"
+              : ""
+          }
+          hidden md:block z-50 bg-background
+        `}
+      >
+        <div className="container flex items-center justify-between py-4 max-w-7xl mx-auto">
+          <div className="flex items-center space-x-8">
+            <Link
+              href="https://www.google.com/"
+              className="text-lg font-medium"
+            >
+              УСЛУГИ
+            </Link>
+            <Link
+              href="https://www.google.com/"
+              className="text-lg font-medium"
+            >
+              ПРОДУКТЫ
+            </Link>
+          </div>
+          <Link
+            href="https://www.google.com/"
+            className="text-3xl font-bold text-[#e5958e]"
+          >
+            <Image src="/logo.png" alt="logo" width={200} height={200} />
+          </Link>
+          <div className="flex items-center space-x-8">
+            <Link
+              href="https://www.google.com/"
+              className="text-lg font-medium"
+            >
+              КОНТАКТЫ
+            </Link>
+            <Link
+              href="https://www.google.com/"
+              className="text-lg font-medium"
+            >
+              ПРАЙС
+            </Link>
+            <div className="relative">
+              <ShoppingCart className="h-6 w-6" />
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                0
+              </span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div
+        className="absolute -top-[10%] left-0  -z-20 w-full h-1/2 opacity-25 md:opacity-50 lg:opacity-100"
+        style={{
+          backgroundImage: "url('/blurry.svg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      ></div>
+      <section className="relative container py-12 max-w-7xl mx-auto flex flex-col md:flex-row space-y-8 items-center gap-x-10">
+        <div className="relative">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:8xl">
+            Ваш Полный Сервис{" "}
+            <span className="text-yellow-600 font-medium">Красоты</span>{" "}
+          </h1>
+          <Image
+            src="/star.svg"
+            className="absolute right-6 -top-10 sm:right-28 -z-20 "
+            width={150}
+            height={150}
+            alt="circle"
+          />
+        </div>
+        <div className="relative h-[400px] md:h-[600px] w-full overflow-hidden rounded-lg">
+          <Image
+            src={`/${heroImage[currentImageIndex]}`}
+            alt="Hero"
+            fill
+            className="object-cover transition-opacity duration-1000"
+            priority
+          />
+        </div>
+      </section>
+
+      {/* Categories */}
+      <div
+        className="relative border-border bg-muted max-w-7xl mx-auto rounded-lg mb-12 px-4 overflow-x-auto"
+        style={{
+          backgroundImage: "url('/bg.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div
+          className="absolute inset-0 hidden lg:block bg-[#ca8a04] opacity-30"
+          style={{ zIndex: 1 }}
+        ></div>
+        <div
+          className="relative container flex items-center justify-between py-3 text-sm"
+          style={{ zIndex: 2 }}
+        >
+          {categories.map((category) => (
+            <Link
+              href="https://www.google.com/"
+              key={category.name}
+              className="hover:text-primary px-2 rounded-lg text-nowrap  text-white hover:border lg:font-medium  lg:text-lg"
+            >
+              {category.name}
+            </Link>
+          ))}
         </div>
       </div>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
+      {/* Services Grid */}
+      <section className="container relative  max-w-7xl mx-auto">
         <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+          src="/star.svg"
+          className="absolute -left-1/4 -top-60 -z-20 "
+          width={500}
+          height={500}
+          alt="circle"
         />
-      </div>
+        <Image
+          src="/star.svg"
+          className="absolute -right-36 -bottom-20 -z-16 "
+          width={200}
+          height={200}
+          alt="circle"
+        />
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {categories.map((category) => (
+            <div
+              key={category.name}
+              className="group relative overflow-hidden rounded-lg"
+            >
+              <Image
+                src={category.image}
+                alt={category.name}
+                width={400}
+                height={600}
+                className="h-[400px] w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-4 text-white">
+                <h3 className="mb-4 text-2xl font-bold">{category.name}</h3>
+                <Link
+                  href="https://www.google.com/"
+                  className="border border-white rounded-lg  px-6 py-2 text-sm transition-colors hover:bg-white hover:text-black"
+                >
+                  ПОДРОБНЕЕ
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <div className="bg-slate-100 absolute bottom-0 left-0 right-0 h-[26%] -z-10"></div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
+      {/* About Section */}
+      <section className="bg-muted py-10 lg:py-16 max-w-7xl mx-auto">
+        <div className="container">
+          <h2 className="mb-8 text-center text-3xl font-bold">О нас</h2>
+          <p className="mx-auto max-w-3xl text-center text-muted-foreground">
+            Салон красоты "PEACH" - ценит высокое качество услуг, экономию
+            времени и комфорт, поэтому предоставляет большое количество
+            параллельных услуг от лучших мастеров beauty - индустрии. Мы следим
+            за последними тенденциями и воплощаем в жизнь самые модные и
+            стильные образы.
           </p>
-        </a>
+        </div>
+      </section>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+      {/* Contact Section */}
+      <section className="container py-16 max-w-7xl mx-auto ">
+        <div className="flex flex-col md:flex-row space-y-8 justify-between w-full">
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold">Контакты</h3>
+            <div className="space-y-2">
+              <p className="flex items-center">
+                <Phone className="mr-2 h-4 w-4" />
+                +7(916)-818-44-44
+              </p>
+              <p className="flex items-center">
+                <Instagram className="mr-2 h-4 w-4" />
+                @peach.mos
+              </p>
+            </div>
+          </div>
+          <div className="space-y-4 max-w-96">
+            <h3 className="text-xl font-bold">Адрес</h3>
+            <p>119146, МОСКВА, ФРУНЗЕНСКАЯ НАБЕРЕЖНАЯ, 18</p>
+          </div>
+          <div className="space-y-4 w-fit">
+            <h3 className="text-xl font-bold">Время работы</h3>
+            <p>Пн-Вс 09:00-22:00</p>
+            <p>Без выходных</p>
+          </div>
+        </div>
+      </section>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+      {/* Footer */}
+      <footer className="border-t border-border bg-background py-8 max-w-7xl mx-auto">
+        <div className="container flex items-center justify-between">
+          <div className="flex space-x-4">
+            <Link href="https://www.google.com/" aria-label="Instagram">
+              <Instagram className="h-6 w-6" />
+            </Link>
+            <Link href="https://www.google.com/" aria-label="Facebook">
+              <Facebook className="h-6 w-6" />
+            </Link>
+          </div>
+        </div>
+      </footer>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      {/* Fixed Booking Button */}
+      <Link
+        href="https://www.google.com/"
+        className="fixed bottom-8 right-8 text-lg  bg-[#513f1f] md:text-xl rounded-lg md:font-semibold px-4 py-2 md:px-6 md:py-3 text-white shadow-lg transition-transform hover:scale-105"
+      >
+        Онлайн запись
+      </Link>
+
+      <style jsx global>{`
+        @keyframes slideDown {
+          from {
+            transform: translateY(-100%);
+          }
+          to {
+            transform: translateY(0);
+          }
+        }
+        .animate-slideDown {
+          animation: slideDown 0.3s ease-out;
+        }
+      `}</style>
+    </div>
   );
 }
